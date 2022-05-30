@@ -1,0 +1,147 @@
+this.Button00_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+		// 컬럼(Column) 개수 구하기
+		var nColCount = this.Dataset1.getColCount();
+		
+		// 레코드(Row) 개수 구하기
+		var nRowCount = this.Dataset1.getRowCount();
+		
+		// ID가 'txt_result'인 Text Area에 결과확인하기 <지정데이터찾기>
+		var sText = "Column Count : " + nColCount;
+		sText += "\n" + "row Count : " + nRowCount; 
+		
+		// 컬럼명(Column ID) 구하기
+		for(var i=0; i<nColCount; i++)
+		{
+			// Syntax : Dataset.getColID( nColIdx )
+			var sColId = this.Dataset1.getColID(i);
+			
+			sText += "\n" + "Column ID (" + i + ")" + sColId;
+		}
+		this.txt_result.set_value(sText);
+};
+
+this.Button01_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	// Syntax : Dataset.addColumn( strColID, strColType [,nColSize])
+	this.Dataset1.addColumn("COL_CHK", "STRING");
+	
+	// Grid 새로 그리기
+	this.Grid00.createFormat();
+};
+
+
+
+this.Button02_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	// 단일조건 : 사원번호가 “KR010”인 사원의 성명 구하기
+// 	// Syntax : Dataset.findRow( strColID, strVal [ ,nStartIdx [ ,nEndIdx ] ] )
+// 	var nRow = this.Dataset1.findRow("EMPL_ID", "KR010");
+// 	
+// 	// Syntax : Dataset.getColumn( nRow, nColIdx ) or Dataset.getColumn( nRow, strColID )
+// 	var sVal = this.Dataset1.getColumn(nRow, "FULL_NAME");
+	
+	// Syntax : Dataset.lookup( strColID, varCmpVal, strOutputColID [ ,arrArgs ] )
+	var sVal = this.Dataset1.lookup("EMPL_ID", "KR010", "FULL_NAME");
+	
+	var sText = "EMPL_ID=KR010, FULL_NAME : " + sVal;
+	this.txt_result.set_value(sText);
+	
+};
+
+this.Button03_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	//복합조건 - 부서코드가 "k10"이며, 급여가 5,000 이하인 사원 구하기
+	// Syntax : Dataset.findRowExpr( strExpr [ ,nStartIdx [ ,nEndIdx [ ,arrArgs] ] ])
+	var nRow = this.Dataset1.findRowExpr("DEPT_CODE == 'K10' && SALARY <=5000");
+	
+	var sVal = this.Dataset1.getColumn(nRow, "FULL_NAME");
+	
+	var sText = "DEPT_CODE == 'K10' && SALARY <=5000 , FULL_NAME : " + sVal;
+	this.txt_result.set_value(sText);
+};
+
+this.Button04_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	// 부서가 "k10"인 사원 목록 구하기
+	// Syntax : Dataset.extractRows( strExpr [ ,nStartIdx [ ,nEndIdx [ ,arrArgs ] ] ] )
+	var arrRow = this.Dataset1.extractRows("DEPT_CODE=='k10'");
+	
+	var sText = "";
+	for(var i=0; i<arrRow.length; i++)
+	{
+		var sVal = this.Dataset1.getColumn(arrRow[i], "FULL_NAME");
+		sText += sVal + "\n";
+	}
+	this.txt_result.set_value(sText);
+};
+
+this.Button05_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+		//남성과 여성의 평균 급여 계산
+		//Dataset.getCaseAvg( StrCmpExpr, strValExpr [ ,nStartIdx [ ,bExcludeNaN [ ,arrArgs ] ] ] )
+		//남자 평균급여 구하기
+		var nAvgM = this.Dataset1.getCaseAvg("GENDER=='M'", "SALARY");
+		
+		//여자 평균급여 구하기
+		var nAvgW1 = this.Dataset1.getCaseAvg("GENDER=='W'", "SALARY");
+		
+		//Null 값을 분모에서 제외한 여자 평균 급여구하기
+		var nAvgW2 = this.Dataset1.getCaseAvg("GENDER=='W'", "SALARY", 0, -1, false);
+											// 3rd : 검색 시작할 ROw 인덱스 값
+											// 4th : 검색 종료할 ROw 인덱스 값
+											// -1일때는 마지막 Row 까지 검색합니다.
+											// 5th : NULL 값의 분모를 포함할지선택(true : 계산제외, false: 계산포함)
+											// false로 지정해서 NULL 값인 여자들은 분모에서 제거하고 값구하기
+	
+		// 'Math' object의 'round' method 이용하여 소수점 2자리까지 반올림
+		var sText = " Man Avg = " + Math.round(nAvgM, 2);
+			sText += " Woman Avg = " + Math.round(nAvgW1, 2);
+			sText += " Woman Avg without NULL = " + Math.round(nAvgW2, 2);
+
+		this.txt_result.set_value(sText);
+		
+};
+
+this.Button05_00_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	// 급여와 보너스를 합친 금액의 평균 금액계산 (합산 후 평균)
+	// Dataset.getAvg( strExpr [ ,nStartIdx [ ,nEndIdx [ ,bExcludeNaN [ ,arrArgs ] ] ] ] )
+	var nAvg = this.Dataset1.getAvg("SALARY+BONUS");
+	var sText = "Salary+Bonus AVG=" +nAvg;
+	this.txt_result.set_value(sText);
+};
+
+this.Button05_00_00_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	// 입사일을 기준으로 내림차순 정렬
+	// Dataset.set_keystring(strKeystring) - set
+	// Dataset.keystring = get
+	this.Dataset1.set_keystring("S:-HIRE_DATE");
+};
+
+this.Button05_00_00_00_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	//남성이고 미혼인 데이터만 필터하여 표현 (복수조건 필터넣기)
+	this.Dataset1.filter("GENDER=='M' && MARRIED==0");
+};
+
+this.Button05_00_00_00_00_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	//원본 레코드 개수와 필터해서 보이는 레코드 개수비교
+	var nCnt = this.Dataset1.getRowCount();
+	var nCntNF = this.Dataset1.getRowCountNF();
+	
+	var sText = "RowCount : " + nCnt;
+		sText = "RowCountNF : " + nCntNF;
+	this.txt_result.set_value(sText);
+};
+
+this.Button06_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	// 성명에 영문 "e" 가 포함되어 있는 데이터만 필터
+	// indexOf는 지정된 문자열이 처음으로 일치하는 위치의 인덱스를 반환하는 메소드
+	var sText = "e";
+	this.Dataset1.filter("FULL_NAME.toUpperCase().indexOf('" + sText +"') >= 0");
+	
+};
