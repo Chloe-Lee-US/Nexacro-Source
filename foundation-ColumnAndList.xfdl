@@ -1,0 +1,77 @@
+this.Button00_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+		// 컬럼(Column) 개수 구하기
+		var nColCount = this.Dataset1.getColCount();
+		
+		// 레코드(Row) 개수 구하기
+		var nRowCount = this.Dataset1.getRowCount();
+		
+		// ID가 'txt_result'인 Text Area에 결과확인하기 <지정데이터찾기>
+		var sText = "Column Count : " + nColCount;
+		sText += "\n" + "row Count : " + nRowCount; 
+		
+		// 컬럼명(Column ID) 구하기
+		for(var i=0; i<nColCount; i++)
+		{
+			// Syntax : Dataset.getColID( nColIdx )
+			var sColId = this.Dataset1.getColID(i);
+			
+			sText += "\n" + "Column ID (" + i + ")" + sColId;
+		}
+		this.txt_result.set_value(sText);
+};
+
+this.Button01_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	// Syntax : Dataset.addColumn( strColID, strColType [,nColSize])
+	this.Dataset1.addColumn("COL_CHK", "STRING");
+	
+	// Grid 새로 그리기
+	this.Grid00.createFormat();
+};
+
+
+
+this.Button02_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	// 단일조건 : 사원번호가 “KR010”인 사원의 성명 구하기
+// 	// Syntax : Dataset.findRow( strColID, strVal [ ,nStartIdx [ ,nEndIdx ] ] )
+// 	var nRow = this.Dataset1.findRow("EMPL_ID", "KR010");
+// 	
+// 	// Syntax : Dataset.getColumn( nRow, nColIdx ) or Dataset.getColumn( nRow, strColID )
+// 	var sVal = this.Dataset1.getColumn(nRow, "FULL_NAME");
+	
+	// Syntax : Dataset.lookup( strColID, varCmpVal, strOutputColID [ ,arrArgs ] )
+	var sVal = this.Dataset1.lookup("EMPL_ID", "KR010", "FULL_NAME");
+	
+	var sText = "EMPL_ID=KR010, FULL_NAME : " + sVal;
+	this.txt_result.set_value(sText);
+	
+};
+
+this.Button03_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	//복합조건 - 부서코드가 "k10"이며, 급여가 5,000 이하인 사원 구하기
+	// Syntax : Dataset.findRowExpr( strExpr [ ,nStartIdx [ ,nEndIdx [ ,arrArgs] ] ])
+	var nRow = this.Dataset1.findRowExpr("DEPT_CODE == 'K10' && SALARY <=5000");
+	
+	var sVal = this.Dataset1.getColumn(nRow, "FULL_NAME");
+	
+	var sText = "DEPT_CODE == 'K10' && SALARY <=5000 , FULL_NAME : " + sVal;
+	this.txt_result.set_value(sText);
+};
+
+this.Button04_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	// 부서가 "k10"인 사원 목록 구하기
+	// Syntax : Dataset.extractRows( strExpr [ ,nStartIdx [ ,nEndIdx [ ,arrArgs ] ] ] )
+	var arrRow = this.Dataset1.extractRows("DEPT_CODE=='k10'");
+	
+	var sText = "";
+	for(var i=0; i<arrRow.length; i++)
+	{
+		var sVal = this.Dataset1.getColumn(arrRow[i], "FULL_NAME");
+		sText += sVal + "\n";
+	}
+	this.txt_result.set_value(sText);
+};
