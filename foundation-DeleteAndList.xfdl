@@ -1,0 +1,69 @@
+this.Button10_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	// Row Index가 3, 4, 5인 레코드를 멀티삭제 <조건에 맞는 데이터삭제>
+	var arrRow = [3, 4, 5];
+	
+	// Multi Row delete
+	// Dataset.deleteMultiRows( arrRowlist );
+	this.Dataset1.deleteMultiRows(arrRow);
+	
+	// var arrRow = this.Grid4.getSelectedDatasetRows();
+};
+
+this.Button11_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	// 삭제된 레코드 개수&성명 데이터 구하기 <삭제 후 확인>
+	// Number = Dataset.getDeletedRowCount()
+	var nDelCnt = this.Dataset1.getDeletedRowCount();
+	
+	var sText = "delete Row : " + nDelCnt;
+	for (i=0; i<nDelCnt; i++) 
+	{
+		// 삭제된 Row의 컬럼값 구하기
+		// Dataset.getDeletedColumn(nRow,strColID)
+		var sDelData = this.Dataset1.getDeletedColumn(i, "FULL_NAME");
+		// sText += "\n" + sDelData;
+		
+		//삭제된 row를 배열로 구하기
+		// Arrary = Dataset.getDeletedRowset()
+		var arrDel = this.Dataset.getDeletedRowset();
+		
+		sText += "\n" + arrDel[i];
+	}
+	
+	this.txt_result.set_value(sText);
+};
+
+this.Button12_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	
+};
+
+this.Button13_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	// Data Check.
+	var rtn = this.fn_dataCheck(this.Dataset1);
+	this.alert(rtn);
+};
+
+this.fn_dataCheck = function(objDs)
+{
+	if(objDs.getDeletedRowCount() >0) {
+			//getDeletedRowCount : 삭제된 건이 있는지 체크 !
+			//변경O : return true_ && 변경X : 다음식으로 넘어감
+		return true;
+	}
+	
+	for(i=0; i<objDs.rowcount; i++)
+	{
+			//Dataset의 rowcount만큼 for문을 작성
+			//for문에서 getRowType Method 를통해 각 행(row)의 rowtype 구함
+			//rowType==2 : 신규 , rowType==4 : 변경
+		var nRowType = objDs.getRowType(i);
+		if(nRowType==2 || nRowType== 4){
+			return true;
+				//true : 있음 , false: 없음
+			}
+		}
+		return false;
+};
