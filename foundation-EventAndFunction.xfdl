@@ -1,0 +1,46 @@
+this.Button07_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	//최상위에 새로운 Row를 삽입하고 Row 상태값 확인
+	//Row 삽입
+	// Dataset.insertRow(nRow)
+	var nRow = this.Dataset1.insertRow(0);
+	
+	//RowType 구하기
+	//Dataset.getRowType( nRow )
+	var nType = this.Dataset1.getRowType(nRow);
+	
+	var sText = "Insert RowType : " + nType;
+	this.txt_result.set_value(sText);
+};
+
+this.Button08_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	//두번째 Row의 성명 컬럼을 "Nexacro"로 변경하고 레코드 상태값 확인
+	//컬럼값 변경하기
+	//Dataset.setColumn( nRow, strColID, varVal )
+	this.Dataset1.setColumn(1, "FULL_NAME", "Naxacro");
+	
+	var nType = this.Dataset1.getRowType(1);
+	
+	var sText = "Update RowType : " + nType;
+	this.txt_result.set_value(sText);
+	
+};
+
+this.Button09_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	// 변경 전 후의 성명 데이터 확인
+	// 현재 값 구하기
+	//Dataset.getColumn( nRow, strColID )
+	var sCurData = this.Dataset1.getColumn(1, "FULL_NAME");
+	
+	// 초기 값 구하기
+	// Dataset.getOrgColumn (nRow, strColID )
+	var sOrgData = this.Dataset1.getOrgColumn(1, "FULL_NAME");
+	
+	var sText = "Cur Data =" +sCurData ;
+		sText += "\nOrg Data =";
+	
+	this.txt_result.set_value(sText);
+		
+};
