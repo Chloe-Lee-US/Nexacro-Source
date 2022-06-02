@@ -1,0 +1,37 @@
+this.Button33_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	// 타이머를 이용하여 시간표현하기
+	// Form.setTimer( nTimerID, nElapse)
+	// nTimerID - 구분하기 위한 ID, nElapse - 밀리초 (millisecond) 단위의 숫자
+		//발생시킬 주기는 1000밀리세컨을 입력하여 1초당 발생하도록 구현
+	this.setTimer(123, 1000);
+};
+
+// property : ontimer 이용해서 아래 함수 생성 !
+this.frmFormExe2_ontimer = function(obj:nexacro.Form,e:nexacro.TimerEventInfo)
+{
+	if(e.timerid == 123){
+		this.fn_getTime();
+	}
+};
+
+this.fn_getTime = function()
+{
+	var objDate = new Date();
+	
+	var nH = objDate.getHours();
+	var nM = objDate.getMinutes();
+	var nS = objDate.getSeconds();
+	
+	this.Static00.set_next(nH + " : " + nM + " : " + nS);
+	//반환받을 시분초를 조합해서 Form에 만들어놓은 static에 세팅	
+}
+
+
+
+this.Button34_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	// 타이머 해제하기
+	// Form.killTimer( nTimerID )
+	this.killTimer(123);
+};
