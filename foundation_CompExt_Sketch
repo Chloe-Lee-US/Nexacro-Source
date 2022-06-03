@@ -1,0 +1,102 @@
+this.CompExt_Sketch_onload = function(obj:nexacro.Form,e:nexacro.LoadEventInfo)
+{
+	this.fn_setBrush();
+};
+
+this.fn_setBrush = function ()
+{
+	this.skc_base.setBrushColor(this.rdo_color.value);
+	this.skc_base.setBrushSize(this.rdo_size.value);
+	this.skc_base.setBrushType(this.rdo_type.value);
+};
+
+this.btn_undo_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	this.skc_base.undo();
+};
+
+this.btn_redo_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	this.skc_base.redo();
+};
+
+this.btn_draw_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	this.idx = 0;
+	this.btn_draw.set_cursor("wait");
+	this.btn_erase.set_cursor("wait");
+	this.setTimer(1, 300);	
+};
+
+this.btn_erase_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	this.idx = 0;
+	this.btn_draw.set_cursor("wait");
+	this.btn_erase.set_cursor("wait");
+	this.setTimer(2, 300);	
+};
+
+this.CompExt_Sketch_ontimer = function(obj:nexacro.Form,e:nexacro.TimerEventInfo)
+{
+	if(e.timerid == 1)
+	{
+		this.fn_draw();
+	}
+	else if(e.timerid == 2)
+	{
+		this.fn_erase();
+	}
+};
+
+this.idx = 0;
+this.fn_draw = function ()
+{
+	var arrX = [100,36,200,0,164,100];
+	var arrY = [0,200,73,73,200,0];
+
+	this.skc_draw.drawStroke(arrX[this.idx],arrY[this.idx], true);
+	this.idx++;
+	this.skc_draw.drawStroke(arrX[this.idx],arrY[this.idx]);	
+	if(this.idx == 6){
+		this.killTimer(1);
+		this.btn_draw.set_cursor("default");
+		this.btn_erase.set_cursor("default");
+	}
+};
+
+this.fn_erase = function (obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	this.skc_draw.setEraseSize(3);
+
+	var arrX = [100,36,200,0,164,100];
+	var arrY = [0,200,73,73,200,0];
+
+	this.skc_draw.drawErase(arrX[this.idx],arrY[this.idx], true);
+	this.idx++;
+	this.skc_draw.drawErase(arrX[this.idx],arrY[this.idx]);	
+	if(this.idx == 6){
+		this.killTimer(2);
+		this.btn_draw.set_cursor("default");
+		this.btn_erase.set_cursor("default");
+	}
+};
+
+this.fn_text = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	this.skc_draw.drawText(10, 10, "nexacro\nplatform", true);
+};
+
+this.btn_load_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	this.skc_sign.loadSketch("Images::img_sign.png");
+};
+
+this.btn_save_onclick = function(obj:nexacro.Button,e:nexacro.ClickEventInfo)
+{
+	this.skc_sign.saveSketch();
+	var skcValue = this.skc_sign.value;
+
+	this.skc_view.loadSketch(skcValue);
+	this.ImageViewer00.set_image(skcValue);
+};
+
